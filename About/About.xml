@@ -15,5 +15,7 @@ Events are dealt from pre-generated per-category "decks" (event queues). Each de
 
 Every deck-driven category can be tuned in the mod settings (interval length, events per interval, threat strength jitter, etc.), or switched off entirely to fall back to classic Cassandra-style generation for that category.
 
-Default tuning matches full-DLC Cassandra's threat pressure while redistributing it: big threats swing between 1 and 3 per cycle with a guaranteed floor and minor threats match her rate. Quests match her Royalty rate and orbital traders arrive half again as often as hers - more trade and more opt-in quest offers to compensate the sharper threat spikes.</description>
+Default tuning matches full-DLC Cassandra's threat pressure while redistributing it: big threats swing between 1 and 3 per cycle with a guaranteed floor and minor threats match her rate. Quests match her Royalty rate and orbital traders arrive half again as often as hers - more trade and more opt-in quest offers to compensate the sharper threat spikes.
+
+Source code: https://github.com/Riketta/deck-storyteller</description>
 </ModMetaData>
