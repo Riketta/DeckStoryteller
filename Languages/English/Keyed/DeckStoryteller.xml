@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <DeckStoryteller_SettingsCategory>Deck Storyteller</DeckStoryteller_SettingsCategory>
+
+  <DeckStoryteller_Intro>Tuning for the Deckie Dealer storyteller's event decks. Each deck pre-generates a queue of events per cycle: events are guaranteed to arrive within the interval, but their timing is shuffled. Disabled categories fall back to classic Cassandra-style generation.</DeckStoryteller_Intro>
+
+  <DeckStoryteller_UseDeck>Use deck for {0}</DeckStoryteller_UseDeck>
+  <DeckStoryteller_ToggleHint>Uncheck to use classic Cassandra-style generation for this category.</DeckStoryteller_ToggleHint>
+
+  <DeckStoryteller_IntervalDays>Interval (days)</DeckStoryteller_IntervalDays>
+  <DeckStoryteller_EventsPerInterval>Guaranteed events per interval</DeckStoryteller_EventsPerInterval>
+  <DeckStoryteller_PossibleEvents>Possible events per interval</DeckStoryteller_PossibleEvents>
+  <DeckStoryteller_ChanceOfPossible>Chance of each possible event (0-1)</DeckStoryteller_ChanceOfPossible>
+  <DeckStoryteller_MinSpacingDays>Min spacing between events (days)</DeckStoryteller_MinSpacingDays>
+  <DeckStoryteller_SafeDays>Safe days after reshuffle</DeckStoryteller_SafeDays>
+  <DeckStoryteller_ReshuffleJitterDays>Reshuffle date jitter (± days)</DeckStoryteller_ReshuffleJitterDays>
+  <DeckStoryteller_PointsRandomFactor>Threat points jitter (±)</DeckStoryteller_PointsRandomFactor>
+
+  <DeckStoryteller_ExpectedRate>Expected rate: {0} events / {1} days ({2} per day). Event strength is rolled independently each time an event fires.</DeckStoryteller_ExpectedRate>
+  <DeckStoryteller_EmptyDeckWarning>Warning: this deck is configured with zero events per interval - the category will generate nothing while the deck is enabled.</DeckStoryteller_EmptyDeckWarning>
+  <DeckStoryteller_SafeDaysTooHighWarning>Warning: safe days after reshuffle is greater than or equal to the interval - no card can ever be placed. Lower it below the interval length.</DeckStoryteller_SafeDaysTooHighWarning>
+
+  <DeckStoryteller_Reset>Reset all to defaults</DeckStoryteller_Reset>
+  <DeckStoryteller_DebugLogging>Enable debug logging (deck shuffles and card deals)</DeckStoryteller_DebugLogging>
+  <DeckStoryteller_ShowDeckStatusAlert>(Debug) Show deck status alert (dev mode only; shows remaining cards and ETAs)</DeckStoryteller_ShowDeckStatusAlert>
+  <DeckStoryteller_DoubleRollJitter>Double-roll strength jitter (two independent rolls; more centered, old-style distribution)</DeckStoryteller_DoubleRollJitter>
+  <DeckStoryteller_ResetHint>Changes apply immediately; the current cycle keeps its already-dealt cards, new values are used from the next reshuffle.</DeckStoryteller_ResetHint>
+
+  <DeckStoryteller_AlertLabel>Deckie Dealer: next card in {0}</DeckStoryteller_AlertLabel>
+  <DeckStoryteller_AlertLabelReshuffle>Deckie Dealer: reshuffle in {0}</DeckStoryteller_AlertLabelReshuffle>
+  <DeckStoryteller_AlertLabelIdle>Deckie Dealer</DeckStoryteller_AlertLabelIdle>
+  <DeckStoryteller_TimeNow>now</DeckStoryteller_TimeNow>
+  <DeckStoryteller_TimeDays>{0}d</DeckStoryteller_TimeDays>
+  <DeckStoryteller_TimeHours>{0}h</DeckStoryteller_TimeHours>
+  <DeckStoryteller_AlertHeader>Current state of the event decks. Only fire times are planned in advance; the incident, its target and its strength are decided when the card fires.</DeckStoryteller_AlertHeader>
+  <DeckStoryteller_AlertDeckCards>{0} card(s) in {1}; reshuffles in {2} ({3})</DeckStoryteller_AlertDeckCards>
+  <DeckStoryteller_AlertDeckEmpty>no cards left; reshuffles in {0} ({1})</DeckStoryteller_AlertDeckEmpty>
+  <DeckStoryteller_AlertDeckWaiting>not shuffled yet</DeckStoryteller_AlertDeckWaiting>
+  <DeckStoryteller_AlertDeckOff>deck off - Cassandra fallback</DeckStoryteller_AlertDeckOff>
+</LanguageData>

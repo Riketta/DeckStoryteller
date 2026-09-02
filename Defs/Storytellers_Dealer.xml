@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Deckie Dealer: Cassandra-style balance, deck-based event scheduling.
+    Inherits all shared comps (endgame quests, DLC content, ambient events) from Core's
+    BaseStoryteller, so it stays compatible with future game/DLC updates automatically.
+
+    For every deck-driven category there is a matching fallback comp (classic Cassandra
+    generation). At runtime exactly one of the two runs, depending on the mod settings
+    toggle for that category. All deck numbers here are only DEFAULTS - players can tune
+    them in the mod settings.
+  -->
+  <StorytellerDef ParentName="BaseStoryteller">
+    <defName>Dealer</defName>
+    <label>Deckie Dealer</label>
+    <description>A mixture of Cassandra's determinism and Randy's unpredictability.\n\nDeckie Dealer deals story events from pre-generated decks of cards: each cycle, a number of event cards is shuffled among blank cards, so something is always coming - you just don't know when. Decks exist per event category, and each one can be tuned or disabled (falling back to classic generation) in the mod settings.\n\nThe default settings match full-DLC Cassandra's threat pressure while redistributing it: big threats swing between 1 and 3 per cycle with a guaranteed floor and minor threats match her rate. Quests match her Royalty rate and orbital traders arrive half again as often as hers - more trade and more opt-in quest offers to compensate the sharper threat spikes. If it feels too easy or too hard, adjust the threat interval (15 days by default; a reasonable window is 10-20 days).\n\nWhen increasing both the interval and the number of events, keep in mind that events may become concentrated: there can be event-free windows as well as periods of extreme stress. It is better to regulate the dynamics with the number of events per interval while keeping the interval reasonably small.</description>
+    <!-- ContentFinder paths are relative to the mod's Textures/ folder (the prefix
+         is stripped during registration), so no "Textures/" prefix here. -->
+    <portraitLarge>DeckieDealer</portraitLarge>
+    <portraitTiny>DeckieDealerTiny</portraitTiny>
+    <listOrder>25</listOrder>
+    <comps>
+
+      <!-- ==================== Deck-driven comps ==================== -->
+
+      <!-- Major threats: 1 guaranteed + 2 possible @ 65% per 15 days (= 2.3/15d expected,
+           slightly above Cassandra's 2.12). Count distribution 12%/46%/42% for 1/2/3
+           threats gives Randy-like spikes and rare lulls while keeping a guaranteed floor.
+           Points jitter ±0.25 double-rolled gives nearly the exact spread of the old
+           two-factor scaling (sd ~0.20 vs ~0.23). -->
+      <li Class="DeckStoryteller.StorytellerCompProperties_DeckCycle">
+        <category>ThreatBig</category>
+        <minDaysPassed>11.0</minDaysPassed>
+        <intervalDays>15</intervalDays>
+        <eventsPerInterval>1</eventsPerInterval>
+        <possibleEventsPerInterval>2</possibleEventsPerInterval>
+        <chanceOfPossibleEvent>0.65</chanceOfPossibleEvent>
+        <minSpacingDays>1.9</minSpacingDays>
+        <safeDaysAfterReshuffle>0</safeDaysAfterReshuffle>
+        <reshuffleJitterDays>1</reshuffleJitterDays>
+        <pointsRandomFactor>0.25</pointsRandomFactor>
+        <forceRaidEnemyBeforeDaysPassed>20</forceRaidEnemyBeforeDaysPassed>
+        <disallowedTargetTags>
+          <li>Map_RaidBeacon</li>
+        </disallowedTargetTags>
+      </li>
+
+      <!-- Minor threats: 2 "possible" cards per 15 days, each with 45% to be real
+           (= 0.9/15d expected, just above Cassandra's ~0.85),
+           scaled down with colony wealth like Cassandra does -->
+      <li Class="DeckStoryteller.StorytellerCompProperties_DeckCycle">
+        <category>ThreatSmall</category>
+        <minDaysPassed>11.0</minDaysPassed>
+        <intervalDays>15</intervalDays>
+        <eventsPerInterval>0</eventsPerInterval>
+        <possibleEventsPerInterval>2</possibleEventsPerInterval>
+        <chanceOfPossibleEvent>0.45</chanceOfPossibleEvent>
+        <minSpacingDays>0.5</minSpacingDays>
+        <reshuffleJitterDays>1</reshuffleJitterDays>
+        <acceptPercentFactorPerThreatPointsCurve>
+          <points>
+            <li>(800, 1)</li>
+            <li>(2800, 0)</li>
+          </points>
+        </acceptPercentFactorPerThreatPointsCurve>
+      </li>
+
+      <!-- Quests: 1 guaranteed + 2 possible @ 75% per 15 days (= 2.5/15d expected,
+           exact parity with Royalty-Cassandra's 2 per 12 days; count distribution
+           6%/38%/56% for 1/2/3 mirrors the ThreatBig deck's variance) -->
+      <li Class="DeckStoryteller.StorytellerCompProperties_DeckCycle">
+        <category>GiveQuest</category>
+        <allowedTargetTags>
+          <li>World</li>
+        </allowedTargetTags>
+        <minDaysPassed>8</minDaysPassed>
+        <intervalDays>15</intervalDays>
+        <eventsPerInterval>1</eventsPerInterval>
+        <possibleEventsPerInterval>2</possibleEventsPerInterval>
+        <chanceOfPossibleEvent>0.75</chanceOfPossibleEvent>
+        <minSpacingDays>3</minSpacingDays>
+        <reshuffleJitterDays>1</reshuffleJitterDays>
+        <acceptFractionByDaysPassedCurve>
+          <points>
+            <li>(8, 0)</li>
+            <li>(15, 1)</li>
+          </points>
+        </acceptFractionByDaysPassedCurve>
+      </li>
+
+      <!-- Orbital traders: 1 guaranteed + 1 possible @ 50% per 15 days (= 1.5/15d,
+           one trader every ~10 days on average - 50% above Cassandra's 1/15d).
+          Deck-driven since v1; this raises the rate rather than adding decking. -->
+      <li Class="DeckStoryteller.StorytellerCompProperties_DeckCycle">
+        <incident>OrbitalTraderArrival</incident>
+        <intervalDays>15</intervalDays>
+        <eventsPerInterval>1</eventsPerInterval>
+        <possibleEventsPerInterval>1</possibleEventsPerInterval>
+        <chanceOfPossibleEvent>0.5</chanceOfPossibleEvent>
+        <minSpacingDays>2</minSpacingDays>
+        <reshuffleJitterDays>1</reshuffleJitterDays>
+      </li>
+
+      <!-- ==================== Fallbacks (classic Cassandra generation, used when
+           the corresponding category deck is disabled in mod settings) ==================== -->
+
+      <li Class="DeckStoryteller.StorytellerCompProperties_FallbackOnOffCycle">
+        <category>ThreatBig</category>
+        <minDaysPassed>11.0</minDaysPassed>
+        <onDays>4.6</onDays>
+        <offDays>6.0</offDays>
+        <minSpacingDays>1.9</minSpacingDays>
+        <numIncidentsRange>1~2</numIncidentsRange>
+        <forceRaidEnemyBeforeDaysPassed>20</forceRaidEnemyBeforeDaysPassed>
+        <disallowedTargetTags>
+          <li>Map_RaidBeacon</li>
+        </disallowedTargetTags>
+      </li>
+
+      <li Class="DeckStoryteller.StorytellerCompProperties_FallbackOnOffCycle">
+        <category>ThreatSmall</category>
+        <minDaysPassed>11.0</minDaysPassed>
+        <onDays>4.6</onDays>
+        <offDays>6.0</offDays>
+        <numIncidentsRange>0.2~1</numIncidentsRange>
+        <acceptPercentFactorPerThreatPointsCurve>
+          <points>
+            <li>(800, 1)</li>
+            <li>(2800, 0)</li>
+          </points>
+        </acceptPercentFactorPerThreatPointsCurve>
+      </li>
+
+      <!-- Quests - non-Royalty -->
+      <li Class="DeckStoryteller.StorytellerCompProperties_FallbackRandomQuest">
+        <category>GiveQuest</category>
+        <allowedTargetTags>
+          <li>World</li>
+        </allowedTargetTags>
+        <onDays>10</onDays>
+        <numIncidentsRange>1</numIncidentsRange>
+        <acceptFractionByDaysPassedCurve>
+          <points>
+            <li>(8, 0)</li>
+            <li>(15, 1)</li>
+          </points>
+        </acceptFractionByDaysPassedCurve>
+        <minSpacingDays>3</minSpacingDays>
+        <disableIfAnyModActive>
+          <li>Ludeon.RimWorld.Royalty</li>
+        </disableIfAnyModActive>
+      </li>
+
+      <!-- Quests - Royalty -->
+      <li Class="DeckStoryteller.StorytellerCompProperties_FallbackRandomQuest">
+        <category>GiveQuest</category>
+        <allowedTargetTags>
+          <li>World</li>
+        </allowedTargetTags>
+        <onDays>12</onDays>
+        <numIncidentsRange>2</numIncidentsRange>
+        <acceptFractionByDaysPassedCurve>
+          <points>
+            <li>(8, 0)</li>
+            <li>(15, 1)</li>
+          </points>
+        </acceptFractionByDaysPassedCurve>
+        <minSpacingDays>3</minSpacingDays>
+        <enableIfAnyModActive>
+          <li>Ludeon.RimWorld.Royalty</li>
+        </enableIfAnyModActive>
+      </li>
+
+      <li Class="DeckStoryteller.StorytellerCompProperties_FallbackOnOffCycle">
+        <incident>OrbitalTraderArrival</incident>
+        <onDays>7</onDays>
+        <offDays>8</offDays>
+        <numIncidentsRange>1</numIncidentsRange>
+      </li>
+
+      <!-- ==================== Verbatim Cassandra comps (always active) ==================== -->
+
+      <!-- Intro -->
+      <li Class="StorytellerCompProperties_ClassicIntro"/>
+
+      <!-- Raid beacon map threats -->
+      <li Class="StorytellerCompProperties_ThreatsGenerator">
+        <allowedTargetTags>
+          <li>Map_RaidBeacon</li>
+        </allowedTargetTags>
+        <parms>
+          <allowedThreats>Raids</allowedThreats>
+          <onDays>1.0</onDays>
+          <offDays>0.5</offDays>
+          <minSpacingDays>0.04</minSpacingDays>
+          <numIncidentsRange>1~2</numIncidentsRange>
+          <minThreatPoints>500</minThreatPoints>
+        </parms>
+      </li>
+
+      <!-- Home misc incidents-->
+      <li Class="StorytellerCompProperties_CategoryMTB">
+        <category>Misc</category>
+        <allowedTargetTags>
+          <li>Map_PlayerHome</li>
+        </allowedTargetTags>
+        <minDaysPassed>5</minDaysPassed>
+        <mtbDays>4.8</mtbDays>
+      </li>
+      <li Class="StorytellerCompProperties_ShipChunkDrop"/>
+      <li Class="StorytellerCompProperties_Disease">
+        <category>DiseaseHuman</category>
+        <minDaysPassed>9</minDaysPassed>
+      </li>
+      <li Class="StorytellerCompProperties_Disease">
+        <category>DiseaseAnimal</category>
+        <minDaysPassed>9</minDaysPassed>
+      </li>
+
+      <!-- Ally/neutral interaction -->
+      <li Class="StorytellerCompProperties_FactionInteraction">
+        <incident>RaidFriendly</incident>
+        <baseIncidentsPerYear>15</baseIncidentsPerYear>
+        <minSpacingDays>0.4</minSpacingDays>
+        <fullAlliesOnly>true</fullAlliesOnly>
+        <minDanger>High</minDanger>
+      </li>
+      <li Class="StorytellerCompProperties_FactionInteraction">
+        <incident>TraderCaravanArrival</incident>
+        <minDaysPassed>5</minDaysPassed>
+        <baseIncidentsPerYear>5</baseIncidentsPerYear>
+        <minSpacingDays>6</minSpacingDays>
+        <allowedTargetTags>
+          <li>Map_PlayerHome</li>
+        </allowedTargetTags>
+      </li>
+      <li Class="StorytellerCompProperties_FactionInteraction">
+        <incident>VisitorGroup</incident>
+        <minDaysPassed>3</minDaysPassed>
+        <baseIncidentsPerYear>4</baseIncidentsPerYear>
+        <minSpacingDays>5</minSpacingDays>
+        <allowedTargetTags>
+          <li>Map_PlayerHome</li>
+        </allowedTargetTags>
+      </li>
+      <li Class="StorytellerCompProperties_FactionInteraction">
+        <incident>TravelerGroup</incident>
+        <minDaysPassed>1</minDaysPassed>
+        <baseIncidentsPerYear>6</baseIncidentsPerYear>
+        <minSpacingDays>1</minSpacingDays>
+        <allowedTargetTags>
+          <li>Map_PlayerHome</li>
+        </allowedTargetTags>
+      </li>
+
+      <!-- Caravan / temp map -->
+      <li Class="StorytellerCompProperties_CategoryIndividualMTBByBiome">
+        <category>Misc</category>
+        <allowedTargetTags>
+          <li>Caravan</li>
+          <li>Map_TempIncident</li>
+        </allowedTargetTags>
+      </li>
+      <li Class="StorytellerCompProperties_CategoryIndividualMTBByBiome">
+        <category>ThreatSmall</category>
+        <applyCaravanVisibility>true</applyCaravanVisibility>
+        <allowedTargetTags>
+          <li>Caravan</li>
+          <li>Map_TempIncident</li>
+        </allowedTargetTags>
+      </li>
+      <li Class="StorytellerCompProperties_CategoryIndividualMTBByBiome">
+        <category>ThreatBig</category>
+        <applyCaravanVisibility>true</applyCaravanVisibility>
+        <allowedTargetTags>
+          <li>Caravan</li>
+          <li>Map_TempIncident</li>
+        </allowedTargetTags>
+      </li>
+
+      <!-- World misc incidents-->
+      <li Class="StorytellerCompProperties_CategoryMTB">
+        <category>Misc</category>
+        <allowedTargetTags>
+          <li>World</li>
+        </allowedTargetTags>
+        <minDaysPassed>15</minDaysPassed>
+        <mtbDays>15</mtbDays>
+      </li>
+
+      <!-- Triggered -->
+      <li Class="StorytellerCompProperties_Triggered">
+        <incident>StrangerInBlackJoin</incident>
+        <delayTicks>180</delayTicks>
+      </li>
+
+    </comps>
+  </StorytellerDef>
+
+</Defs>
