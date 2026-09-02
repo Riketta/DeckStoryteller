@@ -104,45 +104,71 @@ Mod settings have two debug toggles:
   state - remaining cards with their ETAs and the next reshuffle. Pure readout, no
   bell sound.
 
-## For developers
+## Technical notes
 
-```
-About/                     mod metadata + preview
-Defs/                      the storyteller def (deck comps + Cassandra fallbacks)
-Languages/English/         translations for the settings UI
-Source/DeckStoryteller/    C# source + csproj
-Assemblies/                compiled DeckStoryteller.dll
-Textures/                  storyteller portraits
-```
+The storyteller def (`Defs/Storytellers_Dealer.xml`) is assembled from three kinds of
+comps:
 
-Build with the .NET SDK (the csproj expects the game at `E:\SteamLibrary` by default;
-override with your install path):
+- **Deck comps** (`StorytellerCompProperties_DeckCycle` → `StorytellerComp_DeckCycle`) -
+  one per deck-driven category.
+- **Fallback comps** (`StorytellerCompProperties_Fallback*`) - verbatim Cassandra comps
+  that run only while the category's deck is disabled in settings.
+- **Verbatim Cassandra comps** for everything else. The def inherits Core's
+  `BaseStoryteller`, so DLC and endgame comps come from the shared base and follow game
+  updates automatically.
+
+State lives in a `GameComponent` (`DeckStorytellerGameComp`): one `DeckState` per
+`IncidentCategoryDef`, holding timing only - `cycleStartTick`, `cycleDurationTicks`,
+sorted `pendingOffsets` and `consumedCount`. It survives save/load and storyteller
+switches; states whose deck comps no longer exist are pruned on load.
+
+Per category, once per 1000-tick storyteller interval:
+
+1. `MakeIntervalIncidents` runs a `lastProcessTick` guard so the global deck is
+   processed once no matter how many incident targets the pipeline iterates.
+2. `EnsureCurrentCycle` shuffles a new cycle when due (interval length + reshuffle
+   jitter), placing cards with min-spacing relaxation; a fresh deck's first cycle drops
+   a random (< half) portion of its cards. If game time ever regresses (e.g. the dev
+   "view future incidents" simulation), the deck resets itself.
+3. Due cards are dealt: the incident is picked with the vanilla chooser, then a random
+   target that passes both the comp's target-tag filters and the incident's
+   `targetTags`/`CanFireNow`. If none accepts, the card is burned. Wealth-based
+   acceptance rolls at fire time against the actual target's threat points; a failed
+   roll burns the card rather than retrying (retrying would scale the acceptance rate
+   with map count).
+4. Strength jitter is applied in `BuildParms` (uniform `1 ± pointsRandomFactor`,
+   squared when the global double-roll setting is on) and reported for logging.
+
+Cards that came due longer than a grace interval ago (deck was disabled, another
+storyteller was active) are burned instead of fired as a burst.
+
+`DeckStorytellerMod.RegisterDeck` runs at def-resolve time and seeds a persistent
+`DeckCategorySettings` from the XML defaults - XML numbers are defaults only, the
+settings entry is what the comp actually reads. The status alert (`Alert_DeckStatus`)
+is auto-registered by `AlertsReadout` reflecting over all `Alert` subclasses, gated on
+dev mode + its setting + a deck comp present in the current storyteller def.
+
+### Adding decks to other storytellers
+
+Any mod or XML patch can add a `StorytellerCompProperties_DeckCycle` comp to any
+storyteller def. It automatically gets a settings entry seeded from the XML defaults;
+pair it with a `StorytellerCompProperties_Fallback*` comp for a toggleable fallback.
+Deck state is keyed by incident category - two deck comps resolving to the same
+category would share one deck, so don't define duplicates.
+
+## Building from source
+
+Requires the .NET SDK. The project targets `netstandard2.1` and references the game's
+managed assemblies from the install path (default `E:\SteamLibrary\steamapps\common\RimWorld`):
 
 ```
 cd Source/DeckStoryteller
 dotnet build -p:RimWorldDir="C:\Path\To\RimWorld"
 ```
 
-### Adding decks to other storytellers
-
-Any mod or XML patch can add a `DeckStoryteller.StorytellerCompProperties_DeckCycle`
-comp to any storyteller def. It automatically gets a settings entry seeded from the XML
-defaults; pair it with a `StorytellerCompProperties_Fallback*` comp for a toggleable
-fallback. Deck state is keyed by incident category - two deck comps resolving to the
-same category would share one deck, so don't define duplicates.
-
-## Technical notes
-
-- **Persistence** - deck queues live in a `GameComponent` (one state per incident
-  category), so they survive save/load and switching storytellers away and back.
-- **Multi-map** - cards fire at a random target that can actually accept the incident
-  (comp tag filters and the incident's own target tags both apply); if nothing can
-  accept it, the card is burned. Wealth-based rolls are evaluated at fire time against
-  the actual target, so moving bases cannot skew them. Unlike Cassandra's per-map
-  cycles, incident *selection* weighting uses the first tag-eligible target's story
-  state - a cosmetic approximation relevant only with 3+ colonies.
-- **Difficulty / Anomaly** - big-threat suppression and the anomaly incident split are
-  handled by the vanilla storyteller pipeline this comp plugs into.
+Output lands in `Assemblies/DeckStoryteller.dll`. The compiled mod is the whole mod
+folder (`About/`, `Defs/`, `Languages/`, `Source/`, `Textures/`, `Assemblies/`) - copy
+or symlink it into the game's `Mods` directory to install.
 
 ## Known limitations
 
