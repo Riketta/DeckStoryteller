@@ -3,6 +3,6 @@
   <Excluded>
     <exclude>.git</exclude>
     <exclude>Source</exclude>
-    <exclude>About/Preview_Big.png</exclude>
+    <exclude>About\Preview_Big.png</exclude>
   </Excluded>
 </Configuration>
