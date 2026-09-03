@@ -159,11 +159,13 @@ category would share one deck, so don't define duplicates.
 ## Building from source
 
 Requires the .NET SDK. The project targets `netstandard2.1` and references the game's
-managed assemblies from the install path (default `E:\SteamLibrary\steamapps\common\RimWorld`):
+managed assemblies from the install path (default `E:\SteamLibrary\steamapps\common\RimWorld`).
+Build the Release configuration for the dll you ship - a plain `dotnet build` defaults
+to Debug:
 
 ```
 cd Source/DeckStoryteller
-dotnet build -p:RimWorldDir="C:\Path\To\RimWorld"
+dotnet build -c Release -p:RimWorldDir="C:\Path\To\RimWorld"
 ```
 
 Output lands in `Assemblies/DeckStoryteller.dll`. The compiled mod is the whole mod
