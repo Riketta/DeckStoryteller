@@ -7,7 +7,7 @@
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
-  <description>A new storyteller, Deckie Dealer: a mixture of Cassandra's determinism and Randy's unpredictability.
+  <description>A new storyteller, Deckie Dealer: a mixture of Cassandra's determinism and Randy's unpredictability. A great pick for players who got bored of Randy and have enough experience to read Cassandra - IMHO this storyteller should probably become the game's built-in default.
 
 Events are dealt from pre-generated per-category "decks" (event queues). Each deck cycle, a fixed number of event cards is shuffled across the timeline together with blank cards - so events are guaranteed to arrive within the cycle, but their exact timing is unpredictable.
 
