@@ -156,7 +156,7 @@ pair it with a `StorytellerCompProperties_Fallback*` comp for a toggleable fallb
 Deck state is keyed by incident category - two deck comps resolving to the same
 category would share one deck, so don't define duplicates.
 
-## Building from source
+## Build from source
 
 Requires the .NET SDK. The project targets `netstandard2.1` and references the game's
 managed assemblies from the install path (default `E:\SteamLibrary\steamapps\common\RimWorld`).
@@ -168,7 +168,7 @@ cd Source/DeckStoryteller
 dotnet build -c Release -p:RimWorldDir="C:\Path\To\RimWorld"
 ```
 
-Output lands in `Assemblies/DeckStoryteller.dll`. The compiled mod is the whole mod
+The output lands in `Assemblies/DeckStoryteller.dll`. The compiled mod is the whole mod
 folder (`About/`, `Defs/`, `Languages/`, `Source/`, `Textures/`, `Assemblies/`) - copy
 or symlink it into the game's `Mods` directory to install.
 

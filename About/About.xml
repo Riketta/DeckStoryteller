@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
   <name>Deckie Dealer</name>
-  <author>
-    <li>Riketta</li>
-  </author>
+  <author>Riketta</author>
   <packageId>Riketta.DeckStoryteller</packageId>
   <modVersion IgnoreIfNoMatchingField="True">1.0.0</modVersion>
   <supportedVersions>
@@ -17,5 +15,5 @@ Every deck-driven category can be tuned in the mod settings (interval length, ev
 
 Default tuning matches full-DLC Cassandra's threat pressure while redistributing it: big threats swing between 1 and 3 per cycle with a guaranteed floor and minor threats match her rate. Quests match her Royalty rate and orbital traders arrive half again as often as hers - more trade and more opt-in quest offers to compensate the sharper threat spikes.
 
-Source code: https://github.com/Riketta/DeckStoryteller</description>
+Source code &amp; details: https://github.com/Riketta/DeckStoryteller</description>
 </ModMetaData>
