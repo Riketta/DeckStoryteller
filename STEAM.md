@@ -15,7 +15,7 @@ A great pick for players who got bored of Randy and have enough experience to re
 [list][*]Each cycle the deck plans the whole interval at once: guaranteed event cards plus a chance of extras are shuffled among blank cards - an attack is guaranteed to arrive within the interval, but its exact day is unpredictable.
 [*]The reshuffle schedule can't be learned from the calendar: cycles start at a random phase, every cycle length gets a random jitter, and the first cycle drops a random portion of its cards.
 [*]Only the timing is pre-planned. The exact incident, its target and its strength are all decided at the moment the card fires.
-[*]Threat strength gets a fresh random multiplier per event (tunable, mean exactly vanilla) - a run of strong attacks is possible, the average stays balanced.
+[*]Threat strength gets a fresh random multiplier per event (tunable, mean exactly vanilla) - like Randy's raid strength randomness, but a bit more balanced: runs of strong attacks are still possible, extreme swings are rarer, and the average stays vanilla.
 [*]A card that cannot fire anywhere is burned, exactly how vanilla storytellers lose un-fireable incidents.[/list]
 
 [b]Cassandra's pressure, redistributed[/b]
