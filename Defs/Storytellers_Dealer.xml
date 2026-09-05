@@ -36,7 +36,7 @@
         <eventsPerInterval>1</eventsPerInterval>
         <possibleEventsPerInterval>2</possibleEventsPerInterval>
         <chanceOfPossibleEvent>0.65</chanceOfPossibleEvent>
-        <minSpacingDays>1.9</minSpacingDays>
+        <minSpacingDays>0.9</minSpacingDays>
         <safeDaysAfterReshuffle>0</safeDaysAfterReshuffle>
         <reshuffleJitterDays>1</reshuffleJitterDays>
         <pointsRandomFactor>0.25</pointsRandomFactor>
