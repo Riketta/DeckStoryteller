@@ -31,7 +31,7 @@
            two-factor scaling (sd ~0.20 vs ~0.23). -->
       <li Class="DeckStoryteller.StorytellerCompProperties_DeckCycle">
         <category>ThreatBig</category>
-        <minDaysPassed>11.0</minDaysPassed>
+        <minDaysPassed>5.0</minDaysPassed>
         <intervalDays>15</intervalDays>
         <eventsPerInterval>1</eventsPerInterval>
         <possibleEventsPerInterval>2</possibleEventsPerInterval>
@@ -51,7 +51,7 @@
            scaled down with colony wealth like Cassandra does -->
       <li Class="DeckStoryteller.StorytellerCompProperties_DeckCycle">
         <category>ThreatSmall</category>
-        <minDaysPassed>11.0</minDaysPassed>
+        <minDaysPassed>5.0</minDaysPassed>
         <intervalDays>15</intervalDays>
         <eventsPerInterval>0</eventsPerInterval>
         <possibleEventsPerInterval>2</possibleEventsPerInterval>
@@ -103,7 +103,10 @@
       </li>
 
       <!-- ==================== Fallbacks (classic Cassandra generation, used when
-           the corresponding category deck is disabled in mod settings) ==================== -->
+           the corresponding category deck is disabled in mod settings).
+           Values match Cassandra verbatim - including the 11-day threat grace -
+           so disabling a deck restores exactly her pacing, while the deck comps
+           use their own earlier start (5 days). ==================== -->
 
       <li Class="DeckStoryteller.StorytellerCompProperties_FallbackOnOffCycle">
         <category>ThreatBig</category>
